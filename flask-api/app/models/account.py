@@ -11,7 +11,7 @@ class Account(db.Model, BaseClass):
     birth_date = db.Column(db.DateTime)
 
     def __str__(self):
-        return str(self.name)
+        return str(self.name) + str(self.id)
         
     @classmethod
     def cpf_already_registered(cls, cpf):
@@ -26,11 +26,33 @@ class Account(db.Model, BaseClass):
 
         account = DataBaseConnection.select_one(Account, {"email": email})
         return account
+    
+    @classmethod
+    def find_account_by_id(cls, id):
+        from app.database import DataBaseConnection
+
+        account = DataBaseConnection.select_one(Account, {"id": id})
+        return account
         
     @classmethod
     def email_already_registered(cls, email):
         account = cls.find_account_by_email(email)
         return account is not None
+
+    @classmethod
+    def change_amount(cls, transaction_value, account_id):
+        from sqlalchemy.orm.attributes import flag_modified
+
+        account = cls.find_account_by_id(account_id)
+        account = Account(**account)
+        account.amount += transaction_value
+        
+        flag_modified(account, 'amount')
+        db.session.merge(account)
+        db.session.flush()
+        db.session.commit()
+
+        return account
 
     def to_json(self):
         return {

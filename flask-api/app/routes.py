@@ -93,10 +93,18 @@ def get_transactions(page):
 
 @app.route('/transaction', methods=['POST'])
 def create_transaction():
+    account_id = request.json['account_id']
     transaction = Transaction(**request.json)
     db.session.add_all([transaction])
     db.session.commit()
-    print(transaction)
+    
+    changed_account = Account.change_amount(transaction.value, account_id)
+    
+    return jsonify(
+        {
+            'message': 'ok',
+            'account': changed_account.to_json()
+        }
+    ), 200
 
-    return jsonify({'message': 'ok'}), 200
 app.run()
