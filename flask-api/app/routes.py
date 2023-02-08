@@ -80,4 +80,23 @@ def initialize_session():
     else:
         return jsonify({"message": "Email ou senha incorretos"}), 400
 
+@app.route('/transactions/<int:page>', methods=['GET'])
+def get_transactions(page):
+    transactions = Transaction.get_transactions(page)
+
+    return jsonify(
+        {
+            'message': 'ok', 
+            'transactions': [transaction.to_json() for transaction in transactions]
+        }
+    ), 200
+
+@app.route('/transaction', methods=['POST'])
+def create_transaction():
+    transaction = Transaction(**request.json)
+    db.session.add_all([transaction])
+    db.session.commit()
+    print(transaction)
+
+    return jsonify({'message': 'ok'}), 200
 app.run()
