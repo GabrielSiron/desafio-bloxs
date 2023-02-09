@@ -13,9 +13,11 @@ export const AppRoutes = ()=>{
     const [token, setToken] = useState('');
     const [name, setName] = useState('');
     const [cpf, setCpf] = useState('');
+    const [birth, setBirth] = useState('');
     return(
         <Router>
-            <UserContext.Provider value={{email, setEmail, password, setPassword, token, setToken, name, setName, cpf, setCpf}}>
+            <UserContext.Provider value={{email, setEmail, password, setPassword, token, 
+                setToken, name, setName, cpf, setCpf, birth, setBirth}}>
                     <Routes>
                         <Route path='/signup' element={<SignUp />}/>
                         <Route path='/signin' element={<SignIn />}/>
