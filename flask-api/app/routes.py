@@ -12,6 +12,7 @@ from .models.account_type import AccountType
 from .models.transaction import Transaction
 
 from .authentication import Authentication
+from flask_cors import CORS
 
 from .database import DataBaseConnection
 
@@ -19,6 +20,7 @@ auth = Authentication()
 app = create_app(os.getenv('FLASK_CONFIG') or 'default')
 
 app.app_context().push()
+CORS(app)
 
 db.create_all()
 
