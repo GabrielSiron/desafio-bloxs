@@ -8,15 +8,22 @@ import EyeSlash from '../../assets/icon/eye-slash.svg';
 const InputComponent = (props:any)=>{
     
     let inputType:string = props.inputType;
-    const { setEmail, password, setPassword, setName, name, cpf, setCpf } = useContext(UserContext);
+    const { setEmail, password, setPassword, setName, name, cpf, setCpf, birth, setBirth } = useContext(UserContext);
 
     const [passwordIsVisible, setPasswordIsVisible] = useState(true);
     const [passwordTypeView, setPasswordTypeView] = useState('password');
     const [emailContent, setEmailContent] = useState('');
+    const [birthContent, setBirthContent] = useState('');
     const [testValidation, setTestValidation] = useState(null);
     const ChangeSecureText=()=>{
         setPasswordIsVisible(!passwordIsVisible);
     }
+
+    const DateValidation = (event: React.ChangeEvent<HTMLInputElement>)=>{
+        setBirthContent(event.target.value);
+        setBirth(event.target.value)
+    }
+
     const EmailValidation = (event: React.ChangeEvent<HTMLInputElement>)=>{
         let emailRegex:any =  /\S+@\S+\.\S+/;
         setEmailContent(event.target.value);
@@ -38,6 +45,7 @@ const InputComponent = (props:any)=>{
     }
 
     useEffect(()=>{
+        
         if (passwordIsVisible == true){
             setPasswordTypeView('password');
         }
@@ -77,8 +85,12 @@ const InputComponent = (props:any)=>{
                     <Input placeholder={inputType} onChange={CpfValidation} validation={cpf.length == 11? true : undefined} required/>
                 </>
                 :
+                inputType == 'date'?
                 <>
+                    <Input type={inputType} placeholder={'21/06/1998'} onChange={DateValidation} validation={birthContent != ''? true : undefined} required/>
                 </>
+                :
+                <></>
             }
         </>
     );
