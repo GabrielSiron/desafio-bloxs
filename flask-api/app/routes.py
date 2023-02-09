@@ -8,6 +8,7 @@ from . import create_app
 from . import db
 
 from .models.account import Account
+from .models.person import Person
 from .models.account_type import AccountType
 from .models.transaction import Transaction
 
@@ -16,7 +17,6 @@ from flask_cors import CORS
 
 from .database import DataBaseConnection
 
-auth = Authentication()
 app = create_app(os.getenv('FLASK_CONFIG') or 'default')
 
 app.app_context().push()
@@ -32,6 +32,9 @@ def index():
 def create_account():
     cpf = request.json['cpf']
     email = request.json['email']
+    name = request.json['name']
+    birth_date = request.json['birth']
+    password = request.json['password']
 
     if Account.cpf_already_registered(cpf):
         return jsonify(
@@ -46,9 +49,24 @@ def create_account():
                 "message": "email já registrado"
             }
         ), 402
+    
+    account_type = DataBaseConnection.select_one(AccountType, { 'name': 'Conta Fácil' })
 
+    person_json = {
+        'name': name,
+        'cpf': cpf,
+        'birth_date': birth_date
+    }
 
-    new_account = Account(**request.json)  
+    account_json = {
+        'email': email,
+        'password': password,
+        'account_type_id': account_type[0]
+    }
+
+    
+    new_account = Account(**account_json)
+    new_account.person = Person(**person_json)
     db.session.add_all([new_account])
     db.session.commit()
 
@@ -64,13 +82,13 @@ def initialize_session():
 
     if account is not None:
         if account.password == password:
-            token = auth.generate_token(request)
+            token = Authentication.generate_token(request)
+            Authentication.create_session(token, account.id)
 
             return jsonify(
                 {   
                     "message": "Sessão iniciada!",
                     "user": {
-                        "name": account.name,
                         "email": account.email,
                         "token": token.decode()
                     }
@@ -84,28 +102,55 @@ def initialize_session():
 
 @app.route('/transactions/<int:page>', methods=['GET'])
 def get_transactions(page):
-    transactions = Transaction.get_transactions(page)
+    token = request.headers['token']
+    account_id = Authentication.find_id_by_token(token)
+    print("configs", account_id)
+    transactions = Transaction.get_transactions(page, account_id)
+    
 
     return jsonify(
         {
             'message': 'ok', 
-            'transactions': [transaction.to_json() for transaction in transactions]
+            'transactions': [
+                {
+                    'value': transaction[3], 
+                    'date': transaction[4],
+                    'tranfer_sender_id': transaction[5],
+                    'tranfer_receiver_id': transaction[6],
+                    'is_sender': account_id == transaction[5]
+                } for transaction in transactions]
         }
     ), 200
 
 @app.route('/transaction', methods=['POST'])
 def create_transaction():
-    account_id = request.json['account_id']
+    transfer_sender_id = request.json['transfer_sender_id']
+    transfer_receiver_id = request.json['transfer_receiver_id']
     transaction = Transaction(**request.json)
     db.session.add_all([transaction])
     db.session.commit()
     
-    changed_account = Account.change_amount(transaction.value, account_id)
+    changed_account_sender = Account.change_amount(-transaction.value, transfer_sender_id)
+    Account.change_amount(transaction.value, transfer_receiver_id)
     
     return jsonify(
         {
             'message': 'ok',
-            'account': changed_account.to_json()
+            'account': changed_account_sender.to_json()
+        }
+    ), 200
+
+@app.route('/account', methods=['GET'])
+def get_account():
+    token = request.headers['token']
+    account_id = Authentication.find_id_by_token(token)
+    account = Account.find_account_by_id(account_id)
+    return jsonify(
+        {
+            'message': 'ok',
+            'amount': account[5],
+            # 'name': account[4],
+            'id': account[0]
         }
     ), 200
 
