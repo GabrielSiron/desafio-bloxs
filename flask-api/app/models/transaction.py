@@ -13,11 +13,9 @@ class Transaction(db.Model, BaseClass):
     @classmethod
     def get_transactions(cls, page, account_id):
         from app.database import DataBaseConnection
+        last_transferences = DataBaseConnection.select_transactions(account_id)
 
-        sender_transfereces = DataBaseConnection.select_many(Transaction, { 'transfer_sender_id': account_id })
-
-        # receiver_transfereces = DataBaseConnection.select_many(Transaction, { 'transfer_receiver_id': account_id })
-        return sender_transfereces
+        return last_transferences
     
     def to_json(self):
         return {
