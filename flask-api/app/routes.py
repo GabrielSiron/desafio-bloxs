@@ -33,7 +33,7 @@ def create_account():
     cpf = request.json['cpf']
     email = request.json['email']
     name = request.json['name']
-    birth_date = request.json['birth_date']
+    birth_date = request.json['birth']
     password = request.json['password']
 
     if Account.cpf_already_registered(cpf):
@@ -107,13 +107,18 @@ def get_transactions(page):
     print("configs", account_id)
     transactions = Transaction.get_transactions(page, account_id)
     
-    for item in transactions:
-        print("A", item)
 
     return jsonify(
         {
             'message': 'ok', 
-            'transactions': [{'value': transaction[3], 'date': transaction[4]} for transaction in transactions]
+            'transactions': [
+                {
+                    'value': transaction[3], 
+                    'date': transaction[4],
+                    'tranfer_sender_id': transaction[5],
+                    'tranfer_receiver_id': transaction[6],
+                    'is_sender': account_id == transaction[5]
+                } for transaction in transactions]
         }
     ), 200
 
@@ -147,5 +152,6 @@ def get_account():
             # 'name': account[4],
             'id': account[0]
         }
-    )
+    ), 200
+
 app.run()
