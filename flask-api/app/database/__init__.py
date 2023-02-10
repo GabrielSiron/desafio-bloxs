@@ -28,12 +28,12 @@ class DataBaseConnection:
         from app.models.transaction import Transaction
         from sqlalchemy.sql import select
         from sqlalchemy import create_engine, or_
-    
+        from sqlalchemy import desc 
         engine = create_engine('mysql+pymysql://gabriel:143867@0.0.0.0:3306/mysql')
         expression = select(Transaction).filter(or_(
                         Transaction.transfer_sender_id == account_id, 
                         Transaction.transfer_receiver_id == account_id,         
-                        )).limit(10)
+                        )).order_by(desc(Transaction.id)).limit(10)
 
         conn = engine.connect()
         result = conn.execute(expression)
