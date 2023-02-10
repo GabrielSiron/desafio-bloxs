@@ -6,6 +6,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import SignUp from '../pages/sign-up/index';
 import SignIn from '../pages/sign-in/index';
 import Home from '../pages/home/index';
+import Transactions from '../pages/transactions';
 
 export const AppRoutes = ()=>{
     const [email, setEmail] = useState('');
@@ -14,6 +15,7 @@ export const AppRoutes = ()=>{
     const [name, setName] = useState('');
     const [cpf, setCpf] = useState('');
     const [birth, setBirth] = useState('');
+
     return(
         <Router>
             <UserContext.Provider value={{email, setEmail, password, setPassword, token, 
@@ -22,6 +24,7 @@ export const AppRoutes = ()=>{
                         <Route path='/signup' element={<SignUp />}/>
                         <Route path='/signin' element={<SignIn />}/>
                         <Route path='/home' element={<Home />}/>
+                        <Route path='transactions' element={<Transactions/>}/>
                     </Routes>
             </UserContext.Provider>
         </Router>
