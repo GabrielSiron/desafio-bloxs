@@ -90,6 +90,7 @@ def initialize_session():
                     "message": "Sessão iniciada!",
                     "user": {
                         "email": account.email,
+                        "id": account.id,
                         "token": token.decode()
                     }
                 }
@@ -105,7 +106,7 @@ def get_transactions(page):
     token = request.headers['token']
     account_id = Authentication.find_id_by_token(token)
     print("configs", account_id)
-    transactions = Transaction.get_transactions(page, account_id)
+    transactions = Transaction.get_transactions(account_id)
     
 
     return jsonify(
@@ -126,19 +127,45 @@ def get_transactions(page):
 def create_transaction():
     transfer_sender_id = request.json['transfer_sender_id']
     transfer_receiver_id = request.json['transfer_receiver_id']
+    value = request.json['value']
+    
+    token = request.headers['token']
+    account_id = Authentication.find_id_by_token(token)
+    
+    print("Id da Conta: ", account_id)
+    if account_id == transfer_sender_id:
+        amount = Transaction.get_sent_transactions_amount(account_id)
+        account = DataBaseConnection.select_one(Account, { 'id': account_id })
+        account_type = DataBaseConnection.select_one(AccountType, { 'id': account[7] })
+
+        if amount + value > account_type[4]:
+            return jsonify(
+                {
+                    'message': f'limite de saque excedido. O seu tipo de conta ({account_type[3]}) permite um limite diário de R$ {account_type[4]}',
+                }
+            ), 400  
+        
     transaction = Transaction(**request.json)
     db.session.add_all([transaction])
     db.session.commit()
+
+    if transfer_sender_id:
+        changed_account_sender = Account.change_amount(-transaction.value, transfer_sender_id)
+        return jsonify(
+            {
+                'message': 'ok',
+                'account': changed_account_sender.to_json()
+            }
+        ), 200
+    if transfer_receiver_id:
+        Account.change_amount(transaction.value, transfer_receiver_id)
+        return jsonify(
+            {
+                'message': 'ok'
+            }
+        )
     
-    changed_account_sender = Account.change_amount(-transaction.value, transfer_sender_id)
-    Account.change_amount(transaction.value, transfer_receiver_id)
     
-    return jsonify(
-        {
-            'message': 'ok',
-            'account': changed_account_sender.to_json()
-        }
-    ), 200
 
 @app.route('/account', methods=['GET'])
 def get_account():
