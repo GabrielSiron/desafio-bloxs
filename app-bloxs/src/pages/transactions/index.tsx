@@ -1,9 +1,12 @@
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../../contexts/user';
+import { useState } from 'react';
 
 import { Header, MenuItem, Page, Logo } from '../../styles/common-structure';
-import { TransactionsCard, TitlePage, Line, TransactionsContainer } from './style';
+import { TransactionsCard, TitlePage, Line, TransactionsContainer, SeeMore } from './style';
+
+import { GetFirstPage } from '../../services/crud';
 
 import Transaction from '../../components/Transaction';
 
@@ -11,6 +14,25 @@ import LogoTotal from '../../assets/icon/logotype-infinity-bank.svg';
 
 const Transactions = () => {
     const { setToken } = useContext(UserContext);
+
+    const [transactions, setTransactions] = useState([])
+    const [page, setPage] = useState(1)
+
+    const GetTransactions = async () => {
+        let token = sessionStorage.getItem('token') || '';
+        GetFirstPage('transactions', page, token, setTransactions)
+    }
+
+    const GetNextPage = async () => {
+        setPage(page + 1);
+        GetTransactions();
+    }
+
+    useEffect(() => {
+
+        GetTransactions();
+
+    }, [])
 
     let transactionMocked = {' is_sender': true, 'value': 100, 'date': '2023-02-10T00:00:00' }
     let navigate = useNavigate();
@@ -43,12 +65,10 @@ const Transactions = () => {
             <Line>
                 <TransactionsCard>
                     <TransactionsContainer>
-                        <Transaction transaction={transactionMocked}></Transaction>
-                        <Transaction transaction={transactionMocked}></Transaction>
-                        <Transaction transaction={transactionMocked}></Transaction>
-                        <Transaction transaction={transactionMocked}></Transaction>
-                        <Transaction transaction={transactionMocked}></Transaction>
-                        <Transaction transaction={transactionMocked}></Transaction>
+                        {
+                            transactions.map((transaction, i) => <Transaction transaction={transaction}></Transaction>)
+                        }
+                        <SeeMore onClick={GetNextPage}>Carregar Mais</SeeMore>
                     </TransactionsContainer>
                 </TransactionsCard>
             </Line>

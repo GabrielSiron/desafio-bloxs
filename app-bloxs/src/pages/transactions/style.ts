@@ -30,3 +30,9 @@ export const Line = styled.div `
     display: flex;
     justify-content: center !important;
 `
+
+export const SeeMore = styled.button `
+    width: 90%;
+    margin: 5%;
+    background-color: #AAD0FF;
+`

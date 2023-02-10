@@ -88,7 +88,7 @@ const Home = () => {
 
     const GetTransactions = async () => {
         let token = sessionStorage.getItem('token') || '';
-        GetFirstPage('transactions', '1', token, setTransactions)
+        GetFirstPage('transactions', 1, token, setTransactions)
     }
 
     useEffect(() => {
