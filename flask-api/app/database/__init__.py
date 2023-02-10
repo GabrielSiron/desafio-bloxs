@@ -24,7 +24,7 @@ class DataBaseConnection:
 
         return result.fetchall()
 
-    def select_transactions(account_id):
+    def select_transactions(page, account_id):
         from app.models.transaction import Transaction
         from sqlalchemy.sql import select
         from sqlalchemy import create_engine, or_
@@ -34,6 +34,14 @@ class DataBaseConnection:
                         Transaction.transfer_sender_id == account_id, 
                         Transaction.transfer_receiver_id == account_id,         
                         )).order_by(desc(Transaction.id)).limit(10)
+
+        transactions = Transaction.query.filter(or_(
+                        Transaction.transfer_sender_id == account_id, 
+                        Transaction.transfer_receiver_id == account_id,         
+                        )).order_by(desc(Transaction.id)).paginate(page=page, per_page=10)
+
+        for x in transactions:
+            print("oh aqui: ", x)
 
         conn = engine.connect()
         result = conn.execute(expression)

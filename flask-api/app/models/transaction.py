@@ -11,9 +11,9 @@ class Transaction(db.Model, BaseClass):
     transfer_receiver = db.relationship('Account', foreign_keys=transfer_receiver_id, order_by='Account.id')
     
     @classmethod
-    def get_transactions(cls, account_id):
+    def get_transactions(cls, page, account_id):
         from app.database import DataBaseConnection
-        last_transferences = DataBaseConnection.select_transactions(account_id)
+        last_transferences = DataBaseConnection.select_transactions(page, account_id)
 
         return last_transferences
     

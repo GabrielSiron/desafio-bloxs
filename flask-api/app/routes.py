@@ -106,7 +106,7 @@ def get_transactions(page):
     token = request.headers['token']
     account_id = Authentication.find_id_by_token(token)
     print("configs", account_id)
-    transactions = Transaction.get_transactions(account_id)
+    transactions = Transaction.get_transactions(page, account_id)
     
 
     return jsonify(
