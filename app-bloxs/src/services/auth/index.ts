@@ -26,6 +26,7 @@ export const Login = async(body: any, setToken: any) => {
     .then(async(resp)=>{
         let data:any = await resp.json();
         sessionStorage.setItem('token', data.user.token);
+        sessionStorage.setItem('user_id', data.user.id);
         setToken(data.user.token);
     });
 }

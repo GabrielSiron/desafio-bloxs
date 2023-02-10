@@ -32,3 +32,19 @@ export const Get = async (endpoint: string, token: string, setItems: any) => {
         setItems(response)
     });
 }
+
+export const Create = async(endpoint: string, token: string, body: any, functions: Array<any>) => {
+
+    let authContent:any = JSON.stringify(body);
+
+    await fetch(`http://localhost:5000/${endpoint}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'token': token },
+        body: authContent
+    })
+    .then(async(resp)=>{
+        functions.forEach(_function => {
+            _function()
+        })
+    });
+}
