@@ -9,7 +9,7 @@ export const GetById = async (endpoint: string, id: string, token: string, setIt
     });
 }
 
-export const GetFirstPage = async (endpoint: string, page: string, token: string, setItems: any) => {
+export const GetFirstPage = async (endpoint: string, page: number, token: string, setItems: any) => {
     await fetch(`http://localhost:5000/${endpoint}/${page}`, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json', 'token': token },
