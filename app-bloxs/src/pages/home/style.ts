@@ -8,18 +8,19 @@ export const Header = styled.div `
 `
 
 export const MenuItem = styled.button `
+    @keyframes changeText {
+        from {font-size: 1.0rem;}
+        to {font-size: 1.2rem;}
+    }
     width: 120px;
     height: 60px;
     background-color: #fff;
     border: none;
     float: right;
-    margin-right: 20px;
-    text-align: center;
-`
-
-export const Text = styled.span `
-    font-family: 'poppins';
     font-size: 1.0rem;
+    margin-right: 20px;
+    cursor: ${props=>props.disabled ? 'default' : 'pointer'};
+    text-align: center;
 `
 
 export const Page = styled.div `
@@ -36,12 +37,7 @@ export const Logo = styled.img `
     padding-left: 40px;
 `
 
-export const Line = styled.div `
-    padding-top: 60px;
-    width: 100vw;
-    display: flex;
-    justify-content: center !important;
-`
+
 
 export const AmountCard = styled.div `
     width: 300px;
@@ -63,31 +59,10 @@ export const AmountValue = styled.span `
     font-size: 1.8rem;
 `
 
-export const DepositButton = styled.button `
+export const ActionButton = styled.button `
     width: 100px;
     height: 120px;
     font-family: 'poppins-medium';
-    font-size: 1.0rem;
-    color: #fff;
-    background-color: ${props=>props.disabled ? '#AAD0FF' : '#57A0FF'};
-    cursor: ${props=>props.disabled ? 'default' : 'pointer'};
-    border: none;
-    border-radius: 12px;
-    transition: .2s ease-out;
-    margin-left: 20px;
-    &:hover{
-        background-color: ${props=>props.disabled ? '#AAD0FF' : '#80b7ff'};
-    }
-    &:active{
-        background-color: ${props=>props.disabled ? '#AAD0FF' : '#377ad2'};
-    }
-`
-
-export const DraftButton = styled.button `
-    width: 100px;
-    height: 120px;
-    font-family: 'poppins-medium';
-    font-size: 1.0rem;
     color: #fff;
     background-color: ${props=>props.disabled ? '#AAD0FF' : '#57A0FF'};
     cursor: ${props=>props.disabled ? 'default' : 'pointer'};
@@ -115,4 +90,50 @@ export const TransactionsList = styled.div `
     height: 200px;
     overflow-y: scroll;
 
+`
+
+export const TransactionCard = styled.div `
+    width: 540px;
+    height: 60px;
+    background-color: #f2f2f2;
+    border-radius: 12px;
+`
+
+export const InputValue = styled.input`
+    margin: 10px;
+    padding: 10px;
+    font-size: 1.0rem;
+    height: 40px;
+    box-sizing: border-box;
+    border-radius: 8px;
+    font-family: 'inter-regular'; 
+    outline: 0;
+`
+
+export const MoneyPlaceholder = styled.span `
+    font-family: 'poppins-bold';
+    font-size: 1.0rem;
+    margin: 10px;
+    margin-right: 0px;
+`
+
+export const SendButton = styled.button `
+    width: 140px;
+    height: 40px;
+    font-family: 'poppins-medium';
+    font-size: 1.0rem;
+    color: #fff;
+    background-color: ${props=>props.disabled ? '#AAD0FF' : '#57A0FF'};
+    cursor: ${props=>props.disabled ? 'default' : 'pointer'};
+    border: none;
+    border-radius: 12px;
+    transition: .2s ease-out;
+    margin: 10px;
+    float: right;
+    &:hover{
+        background-color: ${props=>props.disabled ? '#AAD0FF' : '#80b7ff'};
+    }
+    &:active{
+        background-color: ${props=>props.disabled ? '#AAD0FF' : '#377ad2'};
+    }
 `
