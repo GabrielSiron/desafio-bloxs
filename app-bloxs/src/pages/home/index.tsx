@@ -13,7 +13,7 @@ import Transaction from '../../components/Transaction/index';
 import { useNavigate } from 'react-router-dom';
 
 const Home = () => {
-    const { setToken } = useContext(UserContext);
+    const { setToken, setPassword } = useContext(UserContext);
 
     const [loading, setLoading] = useState(false);
     const [account, setAccount] = useState({message: '', amount: 0, name: ''});
@@ -27,7 +27,7 @@ const Home = () => {
     const Logout = () => {
         sessionStorage.removeItem('token');   
         setToken('')
-        navigate('/signin')
+        navigate('/')
     }
 
     const RefreshValue = (event: React.ChangeEvent<HTMLInputElement>)=>{
@@ -70,7 +70,7 @@ const Home = () => {
             'value': value,
             'transaction_date': date.toISOString().slice(0, 19),
             'transfer_receiver_id': null,
-            'transfer_sender_id': user_id
+            'transfer_sender_id': new Number(user_id).valueOf()
         }
 
         Create('transaction', token, body, [GetTransactions, GetAccountInfo])
@@ -91,14 +91,20 @@ const Home = () => {
         GetFirstPage('transactions', 1, token, setTransactions)
     }
 
+    const SeeProfile = () => {
+    
+        navigate('/profile')
+    }
+
     useEffect(() => {
 
         let token = sessionStorage.getItem('token') || ''
         
         if(token.length == 0){
-            navigate('/signin')
+            navigate('/')
         }
 
+        setPassword('')
         GetTransactions()
         GetAccountInfo()
         
@@ -111,8 +117,8 @@ const Home = () => {
                 <MenuItem onClick={Logout}>
                     Sair
                 </MenuItem>
-                <MenuItem>
-                    Sobre
+                <MenuItem onClick={SeeProfile}>
+                    Meu Perfil
                 </MenuItem>
                 <MenuItem onClick={goToTransactions}>
                     Transações
