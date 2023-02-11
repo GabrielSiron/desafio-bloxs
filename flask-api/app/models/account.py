@@ -7,6 +7,7 @@ class Account(db.Model, BaseClass):
     email = db.Column(db.String(30), unique=True)
     password = db.Column(db.String(120))
     amount = db.Column(db.Float, default=0)
+    is_active = db.Column(db.Boolean, default=False)
     person_id = db.Column(db.ForeignKey('person.id'), nullable=False)
     person = db.relationship('Person', foreign_keys=person_id, order_by='Person.id')
     account_type_id = db.Column(db.ForeignKey('account_type.id'), nullable=False)
@@ -56,8 +57,23 @@ class Account(db.Model, BaseClass):
 
         return account
 
+    @classmethod
+    def block_account(cls, account_id):
+        from sqlalchemy.orm.attributes import flag_modified
+
+        account = cls.find_account_by_id(account_id)
+        account = Account(**account)
+        account.is_active = False
+
+        flag_modified(account, 'is_active')
+        db.session.merge(account)
+        db.session.flush()
+        db.session.commit()
+
+        return account
+
     def to_json(self):
         return {
             "email": self.email,
-            "amount": self.amount,
+            "amount": self.amount
         }
