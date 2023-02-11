@@ -25,7 +25,8 @@ export const MenuItem = styled.button `
 
 export const Page = styled.div `
     width: 100vw;
-    height: 100vh;
+    min-height: 100vh;
+    height: auto;
     background-color: #fff;
 `
 
@@ -35,10 +36,18 @@ export const Logo = styled.img `
     float: left;
     padding: 20px;
     padding-left: 40px;
+    cursor: pointer;
 `
 export const Line = styled.div `
     padding-top: 60px;
     width: 100vw;
     display: flex;
     justify-content: center !important;
+`
+
+export const TitlePage = styled.h2 `
+    font-family: 'poppins-medium';
+    padding-top: 90px;
+    font-size: 1.4rem;
+    text-align: center;
 `

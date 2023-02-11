@@ -33,6 +33,10 @@ export const GoToLogin = styled.button `
     margin-top: 10px;
 `
 
+export const GoToRegistry = styled(GoToLogin) `
+
+`
+
 export const MainTitle = styled.h1`
     max-width: 593px;
     font-size: 3.5rem;
@@ -70,12 +74,12 @@ export const PoweredTxt = styled.h3`
     font-family: 'inter-semibold';
 `;
 
-export const AuthSide = styled.section`
+export const FormContainer = styled.section`
     display: flex;
     flex-direction: column;
     align-items: center;
     box-sizing: border-box;
-    padding: 10px 0;
+    padding: 30px 0;
     justify-content: center;
 `;
 
