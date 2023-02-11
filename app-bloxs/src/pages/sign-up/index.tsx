@@ -1,6 +1,6 @@
 import React ,{ useState, useContext} from 'react';
 import { UserContext } from '../../contexts/user';
-import { AuthPage, AuthSide, WelcomeContainer, AuthTitle, AuthSubTitle, Form, 
+import { AuthPage, FormContainer, WelcomeContainer, AuthTitle, AuthSubTitle, Form, 
   ActionButton, GoToLogin } from '../../styles/main-auth-structure';
 import { Img } from './style'
 import InputComponent from '../../components/Input/index';
@@ -29,13 +29,13 @@ const SignUp = () => {
   })
   
   const routeChange = () =>{ 
-    let path = `/signin`; 
+    let path = `/`; 
     navigate(path);
   }
 
   return(
     <AuthPage>
-      <AuthSide>
+      <FormContainer>
         <WelcomeContainer>
           <Img src={Logo}/>
           <AuthSubTitle>Cadastre-se</AuthSubTitle>
@@ -49,7 +49,7 @@ const SignUp = () => {
           <ActionButton type='button' onClick={Auth} disabled={false}>Criar Conta</ActionButton>
           <GoToLogin onClick={routeChange}>Já Tenho Conta</GoToLogin>
         </Form>
-      </AuthSide>
+      </FormContainer>
     </AuthPage>
   )
 }

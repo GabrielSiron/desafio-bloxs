@@ -1,28 +1,99 @@
-import { Header, Page, MenuItem, Text,
-    Logo, AmountCard, Line, TitleCard, TransactionsContainer,
-    AmountValue, DepositButton, DraftButton, TransactionsList } from './style';
+import { TransactionCard, InputValue,
+    AmountCard, TitleCard, TransactionsContainer, MoneyPlaceholder,
+    AmountValue, ActionButton, SendButton, TransactionsList } from './style';
+
+import { Header, Line, MenuItem, Page, Logo } from '../../styles/common-structure';
 
 import LogoTotal from '../../assets/icon/logotype-infinity-bank.svg';
 
 import { UserContext } from '../../contexts/user';
 import { useState, useContext, useEffect } from 'react';
-import { Get, GetFirstPage } from '../../services/crud';
+import { Get, GetFirstPage, Create } from '../../services/crud';
 import Transaction from '../../components/Transaction/index';
 import { useNavigate } from 'react-router-dom';
 
 const Home = () => {
-    const { email, password, name, cpf, token, setToken, setEmail, setPassword } = useContext(UserContext);
+    const { setToken, setPassword } = useContext(UserContext);
 
     const [loading, setLoading] = useState(false);
     const [account, setAccount] = useState({message: '', amount: 0, name: ''});
     const [transactions, setTransactions] = useState([])
-    
+    const [deposit, setDeposit] = useState(false)
+    const [withdraw, setWithdraw] = useState(false)
+    const [value, setValue] = useState('')
+
     let navigate = useNavigate();
 
     const Logout = () => {
         sessionStorage.removeItem('token');   
         setToken('')
-        navigate('/signin')
+        navigate('/')
+    }
+
+    const RefreshValue = (event: React.ChangeEvent<HTMLInputElement>)=>{
+        setValue(event.target.value)
+    }
+
+    const changeDepositValue = () => {
+        setValue('0')
+        setDeposit(!deposit)
+        setWithdraw(false)
+    }
+
+    const changeWithdrawnValue = () => {
+        setValue('0')
+        setWithdraw(!withdraw)
+        setDeposit(false)
+    }
+    
+    const CreateDeposit = () => {
+        let token = sessionStorage.getItem('token') || '';
+        let date = new Date();
+        let user_id = sessionStorage.getItem('user_id');
+        let body = {
+            'value': value,
+            'transaction_date': date.toISOString().slice(0, 19),
+            'transfer_receiver_id': user_id,
+            'transfer_sender_id': null
+        }
+
+        Create('transaction', token, body, [GetTransactions, GetAccountInfo])
+        
+        
+    }
+
+    const CreateWithdraw = () => {
+        let token = sessionStorage.getItem('token') || '';
+        let date = new Date();
+        let user_id = sessionStorage.getItem('user_id');
+        let body = {
+            'value': value,
+            'transaction_date': date.toISOString().slice(0, 19),
+            'transfer_receiver_id': null,
+            'transfer_sender_id': new Number(user_id).valueOf()
+        }
+
+        Create('transaction', token, body, [GetTransactions, GetAccountInfo])
+    }
+
+    const GetAccountInfo = async () => {
+        let token = sessionStorage.getItem('token') || '';
+        await Get('account', token, setAccount);
+        
+    }
+
+    const goToTransactions = () => {
+        navigate('/transactions')
+    }
+
+    const GetTransactions = async () => {
+        let token = sessionStorage.getItem('token') || '';
+        GetFirstPage('transactions', 1, token, setTransactions)
+    }
+
+    const SeeProfile = () => {
+    
+        navigate('/profile')
     }
 
     useEffect(() => {
@@ -30,20 +101,10 @@ const Home = () => {
         let token = sessionStorage.getItem('token') || ''
         
         if(token.length == 0){
-            navigate('/signin')
+            navigate('/')
         }
 
-        const GetAccountInfo = async () => {
-            let token = sessionStorage.getItem('token') || '';
-            await Get('account', token, setAccount);
-            
-        }
-
-        const GetTransactions = async () => {
-            let token = sessionStorage.getItem('token') || '';
-            GetFirstPage('transactions', '1', token, setTransactions)
-        }
-
+        setPassword('')
         GetTransactions()
         GetAccountInfo()
         
@@ -54,16 +115,13 @@ const Home = () => {
             <Header>
                 <Logo src={LogoTotal}/>
                 <MenuItem onClick={Logout}>
-                    <Text>Sair</Text>
+                    Sair
                 </MenuItem>
-                <MenuItem>
-                    <Text>Sobre</Text>
+                <MenuItem onClick={SeeProfile}>
+                    Meu Perfil
                 </MenuItem>
-                <MenuItem>
-                    <Text>Transações</Text>
-                </MenuItem>
-                <MenuItem>
-                    <Text>Menu</Text>
+                <MenuItem onClick={goToTransactions}>
+                    Transações
                 </MenuItem>
             </Header>
             <Line>
@@ -71,12 +129,36 @@ const Home = () => {
                     <TitleCard>Saldo</TitleCard>
                     <AmountValue>{ 'R$ ' + account.amount }</AmountValue>
                 </AmountCard>
-                <DepositButton type='button'>Depositar</DepositButton>
-                <DraftButton type='button'>Sacar</DraftButton>
+                <ActionButton type='button' onClick={changeDepositValue}>Depositar</ActionButton>
+                <ActionButton type='button' onClick={changeWithdrawnValue}>Sacar</ActionButton>
             </Line>
+            {
+                deposit?
+                <Line>
+                    <TransactionCard>
+                        <MoneyPlaceholder>R$</MoneyPlaceholder>
+                        <InputValue onChange={RefreshValue}></InputValue>
+                        <SendButton onClick={CreateDeposit}>Depositar</SendButton>
+                    </TransactionCard>
+                </Line>
+                :
+                <></>
+            }
+            {
+                withdraw?
+                <Line>
+                    <TransactionCard>
+                        <MoneyPlaceholder>R$</MoneyPlaceholder>
+                        <InputValue onChange={RefreshValue}></InputValue>
+                        <SendButton onClick={CreateWithdraw}>Sacar</SendButton>
+                    </TransactionCard>
+                </Line>
+                :
+                <></>
+            }
             <Line>
                 <TransactionsContainer>
-                    <TitleCard>Transações</TitleCard>
+                    <TitleCard>Últimas Transações</TitleCard>
                     <TransactionsList>
                         {
                             transactions.map((transaction, i) => <Transaction transaction={transaction}></Transaction>)
