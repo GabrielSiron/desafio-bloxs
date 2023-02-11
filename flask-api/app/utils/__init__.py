@@ -1,7 +1,10 @@
 
 
-def get_form_items(request):
+def get_form_items_to_registry(request):
     return request.json['cpf'], request.json['email'], request.json['name'], request.json['birth'], request.json['password']
+
+def get_form_items_to_login(request):
+    return request.json['email'], request.json['password']
 
 def generate_account_object(request):
     from app.models.account_type import AccountType
@@ -10,7 +13,7 @@ def generate_account_object(request):
     from app.database import DataBaseConnection
     from app.models.account import Account
 
-    cpf, email, name, birth_date, password = get_form_items(request)
+    cpf, email, name, birth_date, password = get_form_items_to_registry(request)
     account_type = DataBaseConnection.select_one(AccountType, { 'name': 'Conta Fácil' })
     
     person_json = {
@@ -29,3 +32,8 @@ def generate_account_object(request):
     new_account.person = Person(**person_json)
 
     return new_account
+
+def get_user_by_auth_token(request):
+    token = request.headers['token']
+    account_id = Authentication.find_id_by_token(token)
+    return account_id
