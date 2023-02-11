@@ -23,12 +23,6 @@ export const MenuItem = styled.button `
     text-align: center;
 `
 
-export const Page = styled.div `
-    width: 100vw;
-    height: 100vh;
-    background-color: #fff;
-`
-
 export const Logo = styled.img `
     width: 120px;
     height: auto;
@@ -83,6 +77,8 @@ export const TransactionsContainer = styled.div `
     height: 300px;
     background-color: #f2f2f2;
     border-radius: 12px;
+    box-sizing: border-box;
+    padding-bottom: 20px;
 `
 
 export const TransactionsList = styled.div `

@@ -17,12 +17,7 @@ export const TransactionsContainer = styled.div `
     border-radius: 12px;
 `
 
-export const TitlePage = styled.h2 `
-    font-family: 'poppins-medium';
-    padding-top: 90px;
-    font-size: 1.4rem;
-    text-align: center;
-`
+
 
 export const Line = styled.div `
     padding-top: 20px;
@@ -33,6 +28,23 @@ export const Line = styled.div `
 
 export const SeeMore = styled.button `
     width: 90%;
-    margin: 5%;
+    height: 40px;
+    border: none;
+    border-radius: 12px;
+    margin: 6px 5%;
+    padding: 0px;
+    font-family: 'poppins-medium';
+    color: #fff;
     background-color: #AAD0FF;
+    background-color: ${props=>props.disabled ? '#AAD0FF' : '#57A0FF'};
+    cursor: ${props=>props.disabled ? 'default' : 'pointer'};
+    border: none;
+    border-radius: 12px;
+    transition: .2s ease-out;
+    &:hover{
+        background-color: ${props=>props.disabled ? '#AAD0FF' : '#80b7ff'};
+    }
+    &:active{
+        background-color: ${props=>props.disabled ? '#AAD0FF' : '#377ad2'};
+    }
 `
