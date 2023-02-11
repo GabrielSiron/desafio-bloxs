@@ -11,11 +11,12 @@ const Transaction = (props: any) => {
             
             let datetime = new Date(props.transaction.date).toISOString();
             let partial_date = datetime.split('T');
+            let hour = partial_date[1].slice(0, 5);
             let date_splited = partial_date[0].split('-');
             let aux = date_splited[2];
             date_splited[2] = date_splited[0];
             date_splited[0] = aux;
-            setDate(date_splited.join('/'));
+            setDate(date_splited.join('/') + ', ' + hour);
             
             
         }
@@ -25,9 +26,11 @@ const Transaction = (props: any) => {
     }, [])
     return(
         <Element>
-            <Title>{props.transaction.is_sender? 'Transferência Enviada' : 'Transferência Recebida'}</Title>
+            <Title>{props.transaction.is_sender? 'Saque' : 'Depósito'}</Title>
             <DateElement>{date}</DateElement>
-            <Value>{'R$ ' + props.transaction.value}</Value>
+            <Value style={ props.transaction.is_sender? {color: '#d11d1d'} : { color: '#33c127'}}>
+                {props.transaction.is_sender? '-' : '' } {'R$ ' + props.transaction.value }
+            </Value>
         </Element>
     )
 }
