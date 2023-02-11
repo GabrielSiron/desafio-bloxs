@@ -16,17 +16,19 @@ class Authentication:
 
     @classmethod
     def is_authenticated(cls, token):
-        
+        from datetime import datetime
         for index, session in enumerate(cls.validSessions):
-            if session['token'] == token:
-                if session['expire_at'] > datetime.datetime.now():
+            if session['token'].decode() == token:
+                if session['expire_at'] > datetime.now():
                     break
                 else:
                     validSessions.pop(index)
         else:
             return False
-
+        
         return True
+
+        
 
     @staticmethod
     def generate_token(req):
