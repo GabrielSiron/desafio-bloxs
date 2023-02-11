@@ -15,6 +15,7 @@ const InputComponent = (props:any)=>{
     const [emailContent, setEmailContent] = useState('');
     const [birthContent, setBirthContent] = useState('');
     const [testValidation, setTestValidation] = useState(null);
+    
     const ChangeSecureText=()=>{
         setPasswordIsVisible(!passwordIsVisible);
     }
@@ -57,7 +58,7 @@ const InputComponent = (props:any)=>{
         <>
             {
                 inputType == 'password' ?
-                    <InputPasswordContainer>
+                    <InputPasswordContainer style={password.length > 6? {borderColor: '#2ecc71'} : {borderColor: '#6A6A6A'}}>
                         <InputPassword placeholder={inputType} onChange={PasswordValidation} required type={passwordTypeView}/>
                         <PasswordPreview type='button' onClick={ChangeSecureText}>
                             { passwordIsVisible ? <img src={Eye} width={22} height={16} alt="view password" draggable={false}/> : <img src={EyeSlash} width={25} height={20} alt="view password" draggable={false}/> }
