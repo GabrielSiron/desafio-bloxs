@@ -24,9 +24,14 @@ export const Login = async(body: any, setToken: any) => {
         body: authContent
     })
     .then(async(resp)=>{
-        let data:any = await resp.json();
-        sessionStorage.setItem('token', data.user.token);
-        sessionStorage.setItem('user_id', data.user.id);
-        setToken(data.user.token);
-    });
+        let response = await resp.json();        
+        if (response.message != 'Sessão iniciada!') return Promise.reject(response.message);
+        
+        sessionStorage.setItem('token', response.user.token);
+        sessionStorage.setItem('user_id', response.user.id);
+        setToken(response.user.token);
+    })
+    .catch(err => {
+        alert(err);
+    })
 }
