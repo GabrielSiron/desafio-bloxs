@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../../contexts/user';
 import { useState } from 'react';
 
-import { Header, MenuItem, Page, Logo } from '../../styles/common-structure';
-import { TransactionsCard, TitlePage, Line, TransactionsContainer, SeeMore } from './style';
+import { Header, MenuItem, TitlePage, Page, Logo } from '../../styles/common-structure';
+import { TransactionsCard, Line, TransactionsContainer, SeeMore } from './style';
 
 import { GetFirstPage } from '../../services/crud';
 
@@ -18,19 +18,25 @@ const Transactions = () => {
     const [transactions, setTransactions] = useState([])
     const [page, setPage] = useState(1)
 
-    const GetTransactions = async () => {
+    const GetTransactions = async (page: number) => {
         let token = sessionStorage.getItem('token') || '';
         GetFirstPage('transactions', page, token, setTransactions)
     }
 
     const GetNextPage = async () => {
+        
+        GetTransactions(page + 1);
         setPage(page + 1);
-        GetTransactions();
+    }
+
+    const SeeProfile = () => {
+    
+        navigate('/profile')
     }
 
     useEffect(() => {
 
-        GetTransactions();
+        GetTransactions(1);
 
     }, [])
 
@@ -40,7 +46,7 @@ const Transactions = () => {
     const Logout = () => {
         sessionStorage.removeItem('token');   
         setToken('');
-        navigate('/signin');
+        navigate('/');
     }
 
     const GoToHome = () => {
@@ -54,8 +60,8 @@ const Transactions = () => {
                 <MenuItem onClick={Logout}>
                     Sair
                 </MenuItem>
-                <MenuItem>
-                    Sobre
+                <MenuItem onClick={SeeProfile}>
+                    Meu Perfil
                 </MenuItem>
                 <MenuItem>
                     Transações
