@@ -11,7 +11,6 @@ export const Element = styled.div `
 export const Title = styled.h2 `
     font-family: 'poppins';
     font-size: 1.2rem;
-    width: 60%;
     padding: 12px;
     float: left;
 `
@@ -21,4 +20,11 @@ export const Value = styled.span `
     font-size: 1.0rem;
     padding: 20px;
     float: right;
+`
+
+export const DateElement = styled.span `
+    font-family: 'poppins';
+    font-size: 0.8rem;
+    padding: 20px;
+    float: left;
 `

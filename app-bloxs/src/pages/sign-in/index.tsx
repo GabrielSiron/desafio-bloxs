@@ -1,6 +1,6 @@
-import React ,{ useState, useContext, useEffect} from 'react';
+import React ,{ useContext, useEffect} from 'react';
 import { UserContext } from '../../contexts/user';
-import { AuthPage, AuthSide, WelcomeContainer, AuthTitle, AuthSubTitle, Form, 
+import { AuthPage, FormContainer, WelcomeContainer, GoToRegistry, AuthSubTitle, Form, 
   ActionButton } from '../../styles/main-auth-structure';
 import { Img } from './style'
 import InputComponent from '../../components/Input/index';
@@ -9,11 +9,16 @@ import Logo from '../../assets/icon/infitity-bank-mark.svg';
 import { useNavigate } from 'react-router-dom';
 
 const SignIn = () => {
-  const { email, password, token, setToken, setEmail, setPassword } = useContext(UserContext);
+  const { email, password, token, setToken } = useContext(UserContext);
 
   const Auth = async () => {
     await Login({email, password}, setToken);
     
+  }
+
+  const routeChange = () =>{ 
+    let path = `/signup`; 
+    navigate(path);
   }
   
   let navigate = useNavigate();
@@ -27,7 +32,7 @@ const SignIn = () => {
 
   return(
     <AuthPage>
-      <AuthSide>
+      <FormContainer>
         <WelcomeContainer>
           <Img src={Logo}/>
           <AuthSubTitle>Login</AuthSubTitle>
@@ -35,9 +40,10 @@ const SignIn = () => {
         <Form>
           <InputComponent inputType={'email'}/>
           <InputComponent inputType={'password'}/>
-          <ActionButton type='button' onClick={Auth} disabled={false}>Criar Conta</ActionButton>
+          <ActionButton type="button" onClick={Auth} >Fazer Login</ActionButton>
+          <GoToRegistry type="button" onClick={routeChange}>Não tem conta? Se inscreva!</GoToRegistry>
         </Form>
-      </AuthSide>
+      </FormContainer>
     </AuthPage>
   )
 }

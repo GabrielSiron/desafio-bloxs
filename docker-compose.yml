@@ -1,0 +1,47 @@
+version: '3.3'
+
+networks:
+  network-flask:
+    external: true
+  
+services:
+  db:
+    image: mysql:8.0.31
+    restart: always
+    environment:
+      MYSQL_DATABASE: 'db'
+      MYSQL_PASSWORD: 'password'
+      MYSQL_ROOT_PASSWORD: 'password'
+    ports:
+      - '3306:3306'
+    expose:
+      - '3306'
+    volumes:
+      - desafio:/var/lib/mysql
+    networks: [network-flask]
+  app-bloxs:
+    build:
+      context: ./app-bloxs/
+      dockerfile: Dockerfile
+    container_name: app-bloxs
+    expose:
+      - '3000'
+    ports:
+      - '3000:3000'
+    command: npm start
+  # flask-api:
+    # build:
+    #   context: ./flask-api/
+    #   dockerfile: Dockerfile
+    # container_name: flask-api
+    # expose:
+    #   - '5000'
+    # ports:
+    #   - '5000:5000'
+    # depends_on:
+    #   - db
+    # networks: [network-flask]
+    # command: sh -c "sleep 12 && python start_db.py && python main.py"
+volumes:
+  desafio:
+

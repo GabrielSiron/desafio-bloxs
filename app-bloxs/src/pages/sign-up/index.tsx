@@ -1,6 +1,6 @@
 import React ,{ useState, useContext} from 'react';
 import { UserContext } from '../../contexts/user';
-import { AuthPage, AuthSide, WelcomeContainer, AuthTitle, AuthSubTitle, Form, 
+import { AuthPage, FormContainer, WelcomeContainer, AuthSubTitle, Form, 
   ActionButton, GoToLogin } from '../../styles/main-auth-structure';
 import { Img } from './style'
 import InputComponent from '../../components/Input/index';
@@ -10,9 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 
 const SignUp = () => {
-  const { email, password, name, cpf, setToken, token, birth, setEmail, setPassword } = useContext(UserContext);
-
-  const [loading, setLoading] = useState(false);
+  const { email, password, name, cpf, setToken, token, birth } = useContext(UserContext);
 
   const Auth = async () => {
     await Registry({email, password, name, cpf, birth}, setToken);
@@ -29,13 +27,13 @@ const SignUp = () => {
   })
   
   const routeChange = () =>{ 
-    let path = `/signin`; 
+    let path = `/`; 
     navigate(path);
   }
 
   return(
     <AuthPage>
-      <AuthSide>
+      <FormContainer>
         <WelcomeContainer>
           <Img src={Logo}/>
           <AuthSubTitle>Cadastre-se</AuthSubTitle>
@@ -49,7 +47,7 @@ const SignUp = () => {
           <ActionButton type='button' onClick={Auth} disabled={false}>Criar Conta</ActionButton>
           <GoToLogin onClick={routeChange}>Já Tenho Conta</GoToLogin>
         </Form>
-      </AuthSide>
+      </FormContainer>
     </AuthPage>
   )
 }
