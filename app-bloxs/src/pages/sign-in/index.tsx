@@ -1,4 +1,4 @@
-import React ,{ useState, useContext, useEffect} from 'react';
+import React ,{ useContext, useEffect} from 'react';
 import { UserContext } from '../../contexts/user';
 import { AuthPage, FormContainer, WelcomeContainer, GoToRegistry, AuthSubTitle, Form, 
   ActionButton } from '../../styles/main-auth-structure';
@@ -9,7 +9,7 @@ import Logo from '../../assets/icon/infitity-bank-mark.svg';
 import { useNavigate } from 'react-router-dom';
 
 const SignIn = () => {
-  const { email, password, token, setToken, setEmail, setPassword } = useContext(UserContext);
+  const { email, password, token, setToken } = useContext(UserContext);
 
   const Auth = async () => {
     await Login({email, password}, setToken);

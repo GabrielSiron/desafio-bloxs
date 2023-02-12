@@ -15,7 +15,6 @@ import { useNavigate } from 'react-router-dom';
 const Home = () => {
     const { setToken, setPassword } = useContext(UserContext);
 
-    const [loading, setLoading] = useState(false);
     const [account, setAccount] = useState({message: '', amount: 0, name: ''});
     const [transactions, setTransactions] = useState([])
     const [deposit, setDeposit] = useState(false)
@@ -70,7 +69,7 @@ const Home = () => {
             'value': value,
             'transaction_date': date.toISOString().slice(0, 19),
             'transfer_receiver_id': null,
-            'transfer_sender_id': new Number(user_id).valueOf()
+            'transfer_sender_id': Number(user_id)
         }
 
         Create('transaction', token, body, [GetTransactions, GetAccountInfo])
@@ -100,7 +99,7 @@ const Home = () => {
 
         let token = sessionStorage.getItem('token') || ''
         
-        if(token.length == 0){
+        if(token.length === 0){
             navigate('/')
         }
 

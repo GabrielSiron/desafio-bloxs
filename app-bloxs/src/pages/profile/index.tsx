@@ -1,7 +1,5 @@
 import { TitlePage, Page, Header, Logo, 
-    MenuItem, Line } from '../../styles/common-structure';
-
-import { ActionButton } from '../../styles/main-auth-structure';
+    MenuItem } from '../../styles/common-structure';
 
 import { Text, TextContainer, ChangeAccountStatus } from './styles';
 import LogoTotal from '../../assets/icon/logotype-infinity-bank.svg';

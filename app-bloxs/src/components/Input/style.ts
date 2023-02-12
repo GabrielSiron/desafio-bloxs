@@ -55,6 +55,6 @@ export const Input = styled(CommonInput).attrs((props:ProtoType)=>({
     width: 100%;
     height: 50px;
     background-color: rgba(0, 0, 0, .0);
-    border: 2px solid ${(props)=>props.validation == null ? '#6A6A6A' : props.validation == false ? '#eb4d4b' : props.validation == true ? '#2ecc71' : ''};
+    border: 2px solid ${(props)=>props.validation == null ? '#6A6A6A' : props.validation === false ? '#eb4d4b' : props.validation === true ? '#2ecc71' : ''};
     margin-top: 10px;
 `;

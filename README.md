@@ -33,6 +33,7 @@ Para rodar o backend, três comandos serão necessários.
 Para rodar esse comando, o container do Banco de Dados precisa estar no ar. Então, após o comando anterior, execute o seguinte comando:
 
 ```
+$ cd flask-api/
 $ python start_db.py
 ```
 
@@ -50,6 +51,7 @@ Isso fará as tabelas serem criadas no banco.
 Em outra aba do terminal, execute:
 
 ```
+$ cd flask-api/
 $ flask db upgrade heads
 ```
 
