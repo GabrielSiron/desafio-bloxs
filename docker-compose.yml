@@ -1,8 +1,4 @@
 version: '3.3'
-
-networks:
-  network-flask:
-    external: true
   
 services:
   db:
@@ -18,7 +14,6 @@ services:
       - '3306'
     volumes:
       - desafio:/var/lib/mysql
-    networks: [network-flask]
   app-bloxs:
     build:
       context: ./app-bloxs/
