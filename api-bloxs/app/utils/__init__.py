@@ -1,19 +1,20 @@
+from app.models.account import Account
+from app.models.account_type import AccountType
+from app.models.person import Person
 
+from app.database import DataBaseConnection
 
-def get_form_items_to_registry(request):
+from flask import jsonify, request
+
+def get_signup_form():
     return request.json['cpf'], request.json['email'], request.json['name'], request.json['birth'], request.json['password']
 
-def get_form_items_to_login(request):
+def get_form_items_to_login():
     return request.json['email'], request.json['password']
 
-def generate_account_object(request):
-    from app.models.account_type import AccountType
-    from app.models.account import Account
-    from app.models.person import Person
-    from app.database import DataBaseConnection
-    from app.models.account import Account
+def generate_account_object():
 
-    cpf, email, name, birth_date, password = get_form_items_to_registry(request)
+    cpf, email, name, birth_date, password = get_signup_form()
     account_type = DataBaseConnection.select_one(AccountType, { 'name': 'Conta Fácil' })
     
     person_json = {
@@ -40,6 +41,16 @@ def get_user_by_auth_token(request):
     account_id = Authentication.find_id_by_token(token)
     return account_id
 
+def get_missing_fields():
+    list_of_fields = ['cpf', 'email', 'name', 'birth', 'password']
+
+    missing_fields = []
+    for field in list_of_fields:
+        if not request.json.get(field):
+            missing_fields.append(field)
+    
+    return missing_fields
+    
 account_mapping = {
     'id': 0,
     'created_at': 1,
@@ -78,3 +89,4 @@ account_type_mapping = {
     'name': 3,
     'drawing_limit': 4
 }
+

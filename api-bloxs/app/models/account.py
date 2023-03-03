@@ -15,7 +15,7 @@ class Account(db.Model, BaseClass):
 
     def __str__(self):
         return str(self.name) + str(self.id)
-        
+
     @classmethod
     def cpf_already_registered(cls, cpf):
         from app.database import DataBaseConnection

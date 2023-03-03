@@ -9,11 +9,12 @@ from .models.transaction import Transaction
 from .database import DataBaseConnection
 from .authentication import Authentication
 
-from .utils import get_form_items_to_registry, generate_account_object
+from .utils import generate_account_object
 from .utils import get_form_items_to_login, get_user_by_auth_token
 
 from .utils import account_mapping, person_mapping, transaction_mapping, account_type_mapping
 
+from .routes.authentication import define_auth_routes
 from flask_cors import CORS
 
 import os
@@ -31,22 +32,7 @@ CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
 with app.app_context():
     db.create_all()
 
-@app.route('/signup', methods=['POST'])
-def create_account():
-    cpf, email, name, birth_date, password = get_form_items_to_registry(request)
-
-    if Account.cpf_already_registered(cpf):
-        return jsonify({"message": "cpf já cadastrado"}), 401
-
-    if Account.email_already_registered(email):
-        return jsonify({"message": "email já registrado"}), 402
-
-    account = generate_account_object(request)
-
-    db.session.add_all([account])
-    db.session.commit()
-
-    return jsonify(account.to_json()), 200
+define_auth_routes(app, db)
 
 @app.route('/signin', methods=['POST'])
 def initialize_session():
