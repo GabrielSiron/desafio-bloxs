@@ -1,3 +1,5 @@
+from flask import request
+
 class Authentication:
     validSessions = []
 
@@ -18,7 +20,7 @@ class Authentication:
     def is_authenticated(cls, token):
         from datetime import datetime
         for index, session in enumerate(cls.validSessions):
-            if session['token'].decode() == token:
+            if session['token'] == token:
                 if session['expire_at'] > datetime.now():
                     break
                 else:
@@ -27,8 +29,6 @@ class Authentication:
             return False
         
         return True
-
-        
 
     @staticmethod
     def generate_token(req):
@@ -41,5 +41,5 @@ class Authentication:
     @classmethod
     def find_id_by_token(cls, token):
         for session in cls.validSessions:
-            if session['token'].decode() == token:
+            if session['token'] == token:
                 return session['account_id']

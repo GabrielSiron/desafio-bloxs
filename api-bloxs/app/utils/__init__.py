@@ -9,7 +9,7 @@ from flask import jsonify, request
 def get_signup_form():
     return request.json['cpf'], request.json['email'], request.json['name'], request.json['birth'], request.json['password']
 
-def get_form_items_to_login():
+def get_signin_form():
     return request.json['email'], request.json['password']
 
 def generate_account_object():
@@ -34,15 +34,14 @@ def generate_account_object():
 
     return new_account
 
-def get_user_by_auth_token(request):
+def get_current_user():
     from app.authentication import Authentication
     
     token = request.headers['token']
     account_id = Authentication.find_id_by_token(token)
     return account_id
 
-def get_missing_fields():
-    list_of_fields = ['cpf', 'email', 'name', 'birth', 'password']
+def get_missing_fields(list_of_fields=None):
 
     missing_fields = []
     for field in list_of_fields:
