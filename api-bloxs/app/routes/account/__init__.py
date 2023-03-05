@@ -30,7 +30,7 @@ def define_account_routes(app, db):
 
     @app.route('/block', methods=['PUT'])
     def block_account():
-        
+        token = request.headers['token']
         account_id = Authentication.find_id_by_token(token)
         Account.block_account(account_id)
 

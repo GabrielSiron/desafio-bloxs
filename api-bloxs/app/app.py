@@ -1,32 +1,16 @@
-from . import create_app
-from . import db
-
-from app.database import DataBaseConnection
-
-from app.models.account import Account
-from app.models.person import Person
-from app.models.account_type import AccountType
-from app.models.transaction import Transaction
-
-from app.authentication import Authentication
-
-from app.utils import generate_account_object
-
-from app.utils import account_mapping, person_mapping, transaction_mapping, account_type_mapping
+"""Definicão das rotas da aplicação"""
 
 from app.routes.auth import define_auth_routes
 from app.routes.transactions import define_transaction_routes
 from app.routes.account import define_account_routes
 
 from flask_cors import CORS
-
-import os
-import bcrypt
-import pymysql
-
 from flask import jsonify, request
 
-from werkzeug.security import generate_password_hash
+import jwt
+
+from . import db
+from . import create_app
 
 app = create_app()
 
@@ -37,11 +21,15 @@ with app.app_context():
 
 @app.before_request
 def is_authenticated():
+    """Verifica se o usuário está autenticado"""
+
     if request.path in ['/signin', '/signup']:
         pass
     else:
         token = request.headers.get('token', None)
-        if not token or not Authentication.is_authenticated(token):
+        try:
+            jwt.decode(token.encode(), 'secret_token')
+        except ValueError:
             return jsonify({"message": "Não Autorizado. Faça Login"}), 403
 
 define_auth_routes(app, db)
