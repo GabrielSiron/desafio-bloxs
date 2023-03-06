@@ -1,22 +1,28 @@
+"""Rotas de Transação"""
+
 from app.authentication import Authentication
 
-from app.utils import get_current_user
-from app.utils import transaction_mapping
+from app.utils import get_current_user_id
+from app.utils import account_mapping, account_type_mapping
 
 from app.models.transaction import Transaction
+from app.models.account import Account
+from app.models.account_type import AccountType
 
-from flask import jsonify
+from flask import jsonify, request
 
 def define_transaction_routes(app, db):
+    """Define funções para rotas de Transação"""
+
     @app.route('/transactions/<int:page>', methods=['GET'])
     def get_transactions(page):
-        
-        account_id = get_current_user()
+
+        account_id = get_current_user_id()
         transactions = Transaction.get_transactions(page, account_id)
-        
+
         return jsonify(
             {
-                'message': 'ok', 
+                'message': 'ok',
                 'transactions': transactions
             }
         ), 200
@@ -26,35 +32,29 @@ def define_transaction_routes(app, db):
         transfer_sender_id = request.json['transfer_sender_id']
         transfer_receiver_id = request.json['transfer_receiver_id']
         value = request.json['value']
-        
+        token = request.headers['token']
         account_id = Authentication.find_id_by_token(token)
-        
-        if account_id == transfer_sender_id:
+        account = Account.find_account_by_id(account_id)
+
+        if account_is_active(account):
+            return jsonify({'message': 'Conta bloqueada. Você não pode realizar transações.'}), 400
+
+        if user_is_sender():
 
             amount = Transaction.get_sent_transactions_amount(account_id)
-            account = Account.find_account_by_id(account_id)
-            
             account_type = AccountType.find_account_type_by_id(account[account_mapping['account_type_id']])
 
-            if account[account_mapping['is_active']] == False:
+            if transaction_breaks_limit(amount, value, account_type):
+                message = generate_error_message(account_type)
+
                 return jsonify(
                     {
-                        'message': 'Conta bloqueada. Você não pode realizar saques.'
+                        'message': message
                     }
                 ), 400
 
-            if amount + value > account_type[account_type_mapping['drawing_limit']]:
-                name = account_type[account_type_mapping['name']]
-                limit = account_type[account_type_mapping['drawing_limit']]
-                
-                return jsonify(
-                    {
-                        'message': f'Limite de saque excedido. O seu tipo de conta ({ name }) permite um limite diário de R$ { limit }'
-                    }
-                ), 400  
-        
         transaction = Transaction(**request.json)
-        
+
         db.session.add_all([transaction])
         db.session.commit()
 
@@ -67,10 +67,32 @@ def define_transaction_routes(app, db):
                 }
             ), 200
 
-        if transfer_receiver_id:
+        else:
             Account.change_amount(transaction.value, transfer_receiver_id)
             return jsonify(
                 {
                     'message': 'ok'
                 }
             )
+
+def transaction_breaks_limit(amount, value_of_transaction, account_type):
+    """Verifica se a transação atual vai ultrapassar o limite da conta do usúário"""
+    return amount + value_of_transaction > account_type[account_type_mapping['drawing_limit']]
+
+def account_is_active(account):
+    """Verifica se a conta passada está ativa"""
+    return account[account_mapping['is_active']] is False
+
+def generate_error_message(account_type):
+    """Gera mensagem de erro para limite de saque excedido"""
+    name = account_type[account_type_mapping['name']]
+    limit = account_type[account_type_mapping['drawing_limit']]
+    message = f'Limite excedido. A ({ name }) permite um limite diário de R$ { limit }'
+    return message
+
+def user_is_sender():
+    "Verifica se o usuário atual está mandando o valor para outra conta"
+    transfer_sender_id = request.json['transfer_sender_id']
+    token = request.headers['token']
+    account_id = Authentication.find_id_by_token(token)
+    return account_id == transfer_sender_id

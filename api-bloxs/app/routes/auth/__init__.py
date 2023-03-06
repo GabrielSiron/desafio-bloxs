@@ -1,4 +1,6 @@
-from app.utils import (get_signup_form, get_missing_fields, generate_account_object,
+""""Auth Routes"""
+
+from app.utils import (get_missing_fields, generate_account_object,
                         get_signin_form)
 
 from app.handling_error import Error
@@ -9,48 +11,46 @@ from app.authentication import Authentication
 from flask import jsonify, request
 
 def define_auth_routes(app, db):
+    """"Define routes to authentication"""
 
     @app.route('/signup', methods=['POST'])
     def create_account():
         missing_fields = get_missing_fields(['cpf', 'email', 'name', 'birth', 'password'])
 
         if len(missing_fields) != 0:
-            error = "Formulário incompleto. Os seguintes campos não foram enviados:\n -" + '\n - '.join(missing_fields)
-
+            error = "Campos não enviados:\n -" + '\n - '.join(missing_fields)
             return jsonify({"message": error}), 400
 
-        cpf, email, name, birth_date, password = get_signup_form()
         account = generate_account_object()
 
         try:
             db.session.add_all([account])
             db.session.commit()
-        
-        except Exception as e:
-            
-            error = Error(e)
+        except Exception as err:
+            error = Error(err)
             message = error.handle_sqlalchemy_errors()
 
             return jsonify({ "message" : message }), 400
 
         return jsonify(account.to_json()), 200
-    
+
     @app.route('/signin', methods=['POST'])
     def initialize_session():
         missing_fields = get_missing_fields(['email', 'password'])
-        
+
         if len(missing_fields) != 0:
-            error = "Formulário incompleto. Os seguintes campos não foram enviados:\n -" + '\n - '.join(missing_fields)
+            error = "Campos não enviados:\n -" + '\n - '.join(missing_fields)
+
+            return jsonify({"message": error}), 400
 
         email, password = get_signin_form()
         account = Account.find_account_by_email(email)
 
         if account and account.password == password:
-            token = Authentication.generate_token(request).decode()
-            Authentication.create_session(token, account.id)
+            token = Authentication.generate_token(request, account.id).decode()
 
             return jsonify(
-                {   
+                {
                     "message": "Sessão iniciada!",
                     "user": {
                         "email": account.email,
