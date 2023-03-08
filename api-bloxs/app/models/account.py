@@ -1,9 +1,6 @@
 """Account File"""
 
 from app.models.base_class import BaseClass
-from app.models.person import Person
-
-from app.database import DataBaseConnection
 
 from sqlalchemy.orm.attributes import flag_modified
 
@@ -27,33 +24,19 @@ class Account(db.Model, BaseClass):
     def cpf_already_registered(cls, cpf):
         """Verifica se o CPF passado já foi registrado em banco"""
         
-
-        account = DataBaseConnection.select_one(Person, {"cpf": cpf})
+        account = cls.find_by('cpf', cpf)
         return account is not None
-
-    @classmethod
-    def find_account_by_email(cls, email):
-
-        account = DataBaseConnection.select_one(Account, {"email": email})
-        return account
-    
-    @classmethod
-    def find_account_by_id(cls, id):
-        
-        account = DataBaseConnection.select_one(Account, {"id": id})
-        return account
     
     @classmethod
     def email_already_registered(cls, email):
         
-        account = cls.find_account_by_email(email)
+        account = cls.find_by('email', email)
         return account is not None
 
     @classmethod
     def change_amount(cls, transaction_value, account_id):
 
-        account = cls.find_account_by_id(account_id)
-        account = Account(**account)
+        account = cls.find_by('id', account_id)
         account.amount += transaction_value
 
         flag_modified(account, 'amount')
@@ -66,7 +49,7 @@ class Account(db.Model, BaseClass):
     @classmethod
     def block_account(cls, account_id):
         
-        account = cls.find_account_by_id(account_id)
+        account = cls.find_by('id', account_id)
         account = Account(**account)
         account.is_active = False
 
@@ -77,6 +60,27 @@ class Account(db.Model, BaseClass):
 
         return account
 
+    @staticmethod
+    def find_by(attribute, value):
+        query = "SELECT * FROM account WHERE " + str(attribute) + "='" + str(value) + "'"
+        account_tuple = db.session.execute(query).first()
+
+        if account_tuple:
+            
+            account_dict = {
+                'id': account_tuple[0],
+                'created_at': account_tuple[1],
+                'updated_at': account_tuple[2],
+                'email': account_tuple[3],
+                'password': account_tuple[4],
+                'amount': account_tuple[5],
+                'is_active': account_tuple[6],
+                'person_id': account_tuple[7],
+                'account_type_id': account_tuple[8]
+            }
+
+            return Account(**account_dict)
+        
     def to_json(self):
         return {
             "email": self.email,

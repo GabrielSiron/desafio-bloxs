@@ -3,8 +3,6 @@ from app.authentication import Authentication
 from app.models.account import Account
 from app.models.person import Person
 
-from app.utils import account_mapping, person_mapping
-
 from flask import request, jsonify
 
 def define_account_routes(app, db):
@@ -13,18 +11,18 @@ def define_account_routes(app, db):
         
         token = request.headers['token']
         account_id = Authentication.find_id_by_token(token)
-        account = Account.find_account_by_id(account_id)
-        person_id = account[account_mapping['person_id']]
+        account = Account.find_by('id', account_id)
+        person_id = account.person_id
         person = Person.find_person_by_id(person_id)
 
         return jsonify(
             {
                 'message': 'ok',
-                'amount': account[account_mapping['amount']],
-                'name': person[person_mapping['name']],
-                'cpf': person[person_mapping['cpf']],
-                'email': account[account_mapping['email']],
-                'id': account[account_mapping['id']]
+                'amount': account.amount,
+                'name': person.name,
+                'cpf': person.cpf,
+                'email': account.email,
+                'id': account.id
             }
         ), 200
 

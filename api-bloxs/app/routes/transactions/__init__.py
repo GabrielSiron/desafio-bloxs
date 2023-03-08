@@ -3,7 +3,6 @@
 from app.authentication import Authentication
 
 from app.utils import get_current_user_id
-from app.utils import account_mapping, account_type_mapping
 
 from app.models.transaction import Transaction
 from app.models.account import Account
@@ -14,11 +13,12 @@ from flask import jsonify, request
 def define_transaction_routes(app, db):
     """Define funções para rotas de Transação"""
 
-    @app.route('/transactions/<int:page>', methods=['GET'])
-    def get_transactions(page):
+    @app.route('/transactions/', methods=['GET'])
+    def get_transactions():
 
-        account_id = get_current_user_id()
-        transactions = Transaction.get_transactions(page, account_id)
+        page: int = int(request.args.get('page'))
+        account_id: int = get_current_user_id()
+        transactions: list = Transaction.get_transactions(page, account_id)
 
         return jsonify(
             {
@@ -34,15 +34,15 @@ def define_transaction_routes(app, db):
         value = request.json['value']
         token = request.headers['token']
         account_id = Authentication.find_id_by_token(token)
-        account = Account.find_account_by_id(account_id)
+        account = Account.find_by('id', account_id)
 
         if account_is_active(account):
             return jsonify({'message': 'Conta bloqueada. Você não pode realizar transações.'}), 400
 
         if user_is_sender():
 
-            amount = Transaction.get_sent_transactions_amount(account_id)
-            account_type = AccountType.find_account_type_by_id(account[account_mapping['account_type_id']])
+            amount = Transaction.get_transactions_of_today(account_id)
+            account_type = AccountType.find_account_type_by_id(account.account_type_id)
 
             if transaction_breaks_limit(amount, value, account_type):
                 message = generate_error_message(account_type)
@@ -77,16 +77,16 @@ def define_transaction_routes(app, db):
 
 def transaction_breaks_limit(amount, value_of_transaction, account_type):
     """Verifica se a transação atual vai ultrapassar o limite da conta do usúário"""
-    return amount + value_of_transaction > account_type[account_type_mapping['drawing_limit']]
+    return amount + value_of_transaction > account_type.drawing_limit
 
 def account_is_active(account):
     """Verifica se a conta passada está ativa"""
-    return account[account_mapping['is_active']] is False
+    return account.is_active is False
 
 def generate_error_message(account_type):
     """Gera mensagem de erro para limite de saque excedido"""
-    name = account_type[account_type_mapping['name']]
-    limit = account_type[account_type_mapping['drawing_limit']]
+    name = account_type.name
+    limit = account_type.drawing_limit
     message = f'Limite excedido. A ({ name }) permite um limite diário de R$ { limit }'
     return message
 

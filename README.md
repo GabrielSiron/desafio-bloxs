@@ -70,3 +70,33 @@ Agora, todas os serviços necessários já estão no ar. O frontend é acessado 
 
 - O bloqueio da conta somente impossibilita SAQUE e não depósito. Essa foi uma decisão baseada no comportamento real de alguns sistemas bancários. Depósito ou transferências recebidas não são bloqueados, apenas saques ou envio de dinheiro.
 - Na home, a lista de transações é reduzida (mostra somente as últimas 10). Para ver todas as transações, vá para a Aba "Transações" no menu superior.
+
+# Documentação
+
+Nessa seção, descreverei cada endpoint presente na aplicação, os dados que ele espera e o que ele retorna para o usuário.
+
+## Endpoints de Autenticação
+
+    /signup
+
+#
+Endpoint utilizado para realizar cadastro de novos usuários. Um exemplo de BODY possível é o seguinte:
+
+```json
+{
+	"email": "teste@teste.com",
+	"password": "senha",
+	"name": "Teste",
+	"cpf": "12345678910",
+	"birth": "2001-06-19T00:00:00"
+}
+```
+
+### Validações
+- Email e CPF não podem ser duplicados em banco e, caso exista um elemento já cadastrado com alguma das duas informações, a API retorna um texto indicando QUAL CAMPO já foi cadastrado no banco de dados;
+- Na ausência de alguma dessas informações, a API retornará um texto indicando QUAL CAMPO não foi preenchido;
+
+#
+
+    /signin
+
