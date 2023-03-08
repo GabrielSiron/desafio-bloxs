@@ -1,6 +1,6 @@
 """"Auth Routes"""
 
-from app.utils import (get_missing_fields, generate_account_object,
+from app.utils import (get_missing_fields, create_account_object,
                         get_signin_form)
 
 from app.handling_error import Error
@@ -21,7 +21,7 @@ def define_auth_routes(app, db):
             error = "Campos não enviados:\n -" + '\n - '.join(missing_fields)
             return jsonify({"message": error}), 400
 
-        account = generate_account_object()
+        account = create_account_object()
 
         try:
             db.session.add_all([account])
@@ -44,7 +44,7 @@ def define_auth_routes(app, db):
             return jsonify({"message": error}), 400
 
         email, password = get_signin_form()
-        account = Account.find_account_by_email(email)
+        account = Account.find_by('email', email)
 
         if account and account.password == password:
             token = Authentication.generate_token(request, account.id).decode()
