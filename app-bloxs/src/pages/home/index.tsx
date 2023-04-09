@@ -13,18 +13,18 @@ import Transaction from '../../components/Transaction/index';
 import { useNavigate } from 'react-router-dom';
 
 const Home = () => {
-    const { setToken, setPassword } = useContext(UserContext);
+    const { token, setToken, setPassword } = useContext(UserContext);
 
     const [account, setAccount] = useState({message: '', amount: 0, name: ''});
     const [transactions, setTransactions] = useState([])
-    const [deposit, setDeposit] = useState(false)
+    const [deposit, setDeposit] = useState(false) 
     const [withdraw, setWithdraw] = useState(false)
     const [value, setValue] = useState('')
 
     let navigate = useNavigate();
 
     const Logout = () => {
-        sessionStorage.removeItem('token');   
+        sessionStorage.removeItem('token');  
         setToken('')
         navigate('/')
     }
@@ -62,7 +62,6 @@ const Home = () => {
     }
 
     const CreateWithdraw = () => {
-        let token = sessionStorage.getItem('token') || '';
         let date = new Date();
         let user_id = sessionStorage.getItem('user_id');
         let body = {
@@ -76,7 +75,6 @@ const Home = () => {
     }
 
     const GetAccountInfo = async () => {
-        let token = sessionStorage.getItem('token') || '';
         await Get('account', token, setAccount);
         
     }
@@ -86,7 +84,6 @@ const Home = () => {
     }
 
     const GetTransactions = async () => {
-        let token = sessionStorage.getItem('token') || '';
         GetFirstPage('transactions', 1, token, setTransactions)
     }
 
@@ -111,7 +108,7 @@ const Home = () => {
 
     return(
         <Page>
-            <Header>
+            <Header className={'header'}>
                 <Logo src={LogoTotal}/>
                 <MenuItem onClick={Logout}>
                     Sair

@@ -14,26 +14,29 @@ from . import create_app
 
 app = create_app()
 
-CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
+CORS(app, resources={r"/*": {"origins": "http://localhost:8100"}})
 
 with app.app_context():
     db.create_all()
 
-@app.before_request
-def is_authenticated():
-    """Verifica se o usuário está autenticado"""
-
-    if request.path in ['/signin', '/signup']:
-        pass
-    else:
-        token = request.headers.get('token', None)
-        try:
-            jwt.decode(token.encode(), 'secret_token')
-        except ValueError:
-            return jsonify({"message": "Não Autorizado. Faça Login"}), 403
-
 define_auth_routes(app, db)
 define_transaction_routes(app, db)
 define_account_routes(app, db)
+
+# @app.before_request
+# def is_authenticated():
+#     """Verifica se o usuário está autenticado"""
+
+#     print(request.headers)
+
+#     if request.path in ['/signin', '/signup']:
+#         pass
+#     else:
+        
+#         try:
+#             token = request.headers['token'] or ''
+#             jwt.decode(token.encode(), 'secret_token')
+#         except ValueError:
+#             return jsonify({"message": "Não Autorizado. Faça Login"}), 403
 
 app.run()

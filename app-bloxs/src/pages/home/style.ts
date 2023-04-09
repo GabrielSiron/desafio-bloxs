@@ -31,8 +31,6 @@ export const Logo = styled.img `
     padding-left: 40px;
 `
 
-
-
 export const AmountCard = styled.div `
     width: 300px;
     height: 120px;

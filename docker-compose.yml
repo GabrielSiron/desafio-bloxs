@@ -1,7 +1,7 @@
 version: '3.3'
   
 services:
-  db:
+  db-bloxs:
     image: mysql:8.0.31
     restart: always
     environment:
@@ -12,31 +12,45 @@ services:
       - '3306:3306'
     expose:
       - '3306'
+    networks:
+     - network
     volumes:
       - desafio:/var/lib/mysql
-  app-bloxs:
-    build:
-      context: ./app-bloxs/
-      dockerfile: Dockerfile
-    container_name: app-bloxs
-    expose:
-      - '3000'
-    ports:
-      - '3000:3000'
-    command: npm start
-  # flask-api:
-    # build:
-    #   context: ./flask-api/
-    #   dockerfile: Dockerfile
-    # container_name: flask-api
-    # expose:
-    #   - '5000'
-    # ports:
-    #   - '5000:5000'
-    # depends_on:
-    #   - db
-    # networks: [network-flask]
-    # command: sh -c "sleep 12 && python start_db.py && python main.py"
+  # app-bloxs:
+  #   build:
+  #     context: ./app-bloxs/
+  #     dockerfile: Dockerfile
+  #   container_name: app-bloxs
+  #   expose:
+  #     - '3000'
+  #   ports:
+  #     - '3000:3000'
+  #   volumes:
+  #     - ./app-bloxs:/usr/src/app/app-bloxs
+  #   networks:
+  #    - network
+  #   command: npm start
+  # api-bloxs:
+  #   build:
+  #     context: ./api-bloxs/
+  #     dockerfile: Dockerfile
+  #   container_name: api-bloxs
+  #   volumes:
+  #     - api-bloxs:/app/api-bloxs
+  #   expose:
+  #     - '5000'
+  #   ports:
+  #     - '5000:5000'
+  #   networks:
+  #    - network
+  #   depends_on:
+  #     - db-bloxs
+  #   command: sh -c "sleep 12 && python start_db.py && python main.py"
 volumes:
   desafio:
+  api-bloxs:
+  app-bloxs:
 
+networks:
+  network:
+    external: true

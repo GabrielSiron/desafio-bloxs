@@ -13,7 +13,7 @@ from flask import jsonify, request
 def define_transaction_routes(app, db):
     """Define funções para rotas de Transação"""
 
-    @app.route('/transactions/', methods=['GET'])
+    @app.route('/transaction', methods=['GET'])
     def get_transactions():
 
         page: int = int(request.args.get('page'))
@@ -32,7 +32,7 @@ def define_transaction_routes(app, db):
         transfer_sender_id = request.json['transfer_sender_id']
         transfer_receiver_id = request.json['transfer_receiver_id']
         value = request.json['value']
-        token = request.headers['token']
+        token = request.headers['token'] or ''
         account_id = Authentication.find_id_by_token(token)
         account = Account.find_by('id', account_id)
 
@@ -93,6 +93,6 @@ def generate_error_message(account_type):
 def user_is_sender():
     "Verifica se o usuário atual está mandando o valor para outra conta"
     transfer_sender_id = request.json['transfer_sender_id']
-    token = request.headers['token']
+    token = request.headers['token'] or ''
     account_id = Authentication.find_id_by_token(token)
     return account_id == transfer_sender_id

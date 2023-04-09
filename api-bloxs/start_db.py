@@ -6,8 +6,7 @@ conn = pymysql.connect(host='localhost',
                        password='password')
 try:
     with conn.cursor() as cursor:
-        cursor.execute('DROP DATABASE IF EXISTS desafio;')
-        cursor.execute('CREATE DATABASE desafio;')
+        cursor.execute('CREATE DATABASE IF NOT EXISTS desafio;')
         
 
 finally:

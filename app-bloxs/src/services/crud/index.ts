@@ -21,13 +21,13 @@ export const GetFirstPage = async (endpoint: string, page: number, token: string
 }
 
 export const Get = async (endpoint: string, token: string, setItems: any) => {
+    
     await fetch(`http://localhost:5000/${endpoint}`, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json', 'token': token },
     })
     .then(async(resp)=>{
         let response = await resp.json();
-        console.log(response);
         
         setItems(response)
     });

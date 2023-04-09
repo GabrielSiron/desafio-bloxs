@@ -9,7 +9,7 @@ def define_account_routes(app, db):
     @app.route('/account', methods=['GET'])
     def get_account():
         
-        token = request.headers['token']
+        token = request.headers['token'] or ''
         account_id = Authentication.find_id_by_token(token)
         account = Account.find_by('id', account_id)
         person_id = account.person_id
@@ -28,7 +28,7 @@ def define_account_routes(app, db):
 
     @app.route('/block', methods=['PUT'])
     def block_account():
-        token = request.headers['token']
+        token = request.headers['token'] or ''
         account_id = Authentication.find_id_by_token(token)
         Account.block_account(account_id)
 

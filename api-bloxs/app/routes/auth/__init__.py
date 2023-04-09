@@ -13,6 +13,10 @@ from flask import jsonify, request
 def define_auth_routes(app, db):
     """"Define routes to authentication"""
 
+    @app.route('/', methods=['GET'])
+    def nothing():
+        return jsonify({"message": "Nada"}), 200
+        
     @app.route('/signup', methods=['POST'])
     def create_account():
         missing_fields = get_missing_fields(['cpf', 'email', 'name', 'birth', 'password'])

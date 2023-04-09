@@ -1,0 +1,7 @@
+{   
+    "python.linting.pylint.enabled": false,
+    "python.linting.pylintArgs": [
+        "--disable=all",
+        "--disable=import-outside-toplevel"
+    ],
+}

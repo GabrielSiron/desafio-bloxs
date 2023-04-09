@@ -13,6 +13,6 @@ class Authentication:
 
     @classmethod
     def find_id_by_token(cls, token):
-
-        account = jwt.decode(token.encode(), 'secret_token')
+        
+        account = jwt.decode(token, 'secret_token')
         return account['id']

@@ -44,7 +44,7 @@ def create_account_object():
     account_json = {
         'email': email,
         'password': password,
-        'account_type_id': account_type[0]
+        'account_type_id': account_type.id
     }
 
     new_account = Account(**account_json)
@@ -55,7 +55,7 @@ def create_account_object():
 def get_current_user_id():
     """Retona o id do usuário atual"""
     
-    token = request.headers['token']
+    token = request.headers['token'] or ''
     account_id = int(Authentication.find_id_by_token(token))
     return account_id
 
